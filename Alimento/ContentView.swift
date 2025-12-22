@@ -2,60 +2,60 @@
 //  ContentView.swift
 //  Alimento
 //
-//  Created by Atharva Hankare on 12/21/25.
+//  Created on Phase 1
 //
 
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
+    @State private var selectedTab = 0
+    
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        TabView(selection: $selectedTab) {
+            DashboardView()
+                .tabItem {
+                    Label("Dashboard", systemImage: "house.fill")
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                .tag(0)
+            
+            InventoryView()
+                .tabItem {
+                    Label("Inventory", systemImage: "cabinet.fill")
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+                .tag(1)
+            
+            PlannerView()
+                .tabItem {
+                    Label("Planner", systemImage: "calendar")
                 }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
+                .tag(2)
+            
+            GroceryView()
+                .tabItem {
+                    Label("Grocery", systemImage: "cart.fill")
+                }
+                .tag(3)
+            
+            AssistantView()
+                .tabItem {
+                    Label("Assistant", systemImage: "message.fill")
+                }
+                .tag(4)
         }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: [
+            UserProfile.self,
+            InventoryItem.self,
+            Dish.self,
+            DishIngredient.self,
+            PlannedMeal.self,
+            GroceryList.self,
+            GroceryItem.self,
+            AiEventLog.self
+        ])
 }
+
