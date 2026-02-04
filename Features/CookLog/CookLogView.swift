@@ -61,16 +61,26 @@ struct CookLogView: View {
                                 }
                                 .accessibilityLabel("Dish: \(dish.name)")
                                 .accessibilityHint("Swipe left to delete")
+                                .listRowBackground(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(AppTheme.cardBackground)
+                                        .padding(.vertical, 2)
+                                        .padding(.horizontal, 8)
+                                )
                             }
                         }
+                        .scrollContentBackground(.hidden)
+                        .listStyle(.plain)
                     }
                 } else {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .background(AppTheme.screenBackground)
             .navigationTitle("Cook Log")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {

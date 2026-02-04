@@ -40,7 +40,7 @@ struct WeeklyMealPlanView: View {
                                     }
                                 }
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(AppTheme.cardBackground)
                                 .cornerRadius(12)
                             }
                         }
@@ -141,7 +141,7 @@ struct DayMealPlanCard: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(AppTheme.cardBackground)
         .cornerRadius(12)
     }
 }

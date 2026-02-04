@@ -49,6 +49,7 @@ struct AlimentoApp: App {
             ContentView()
                 .modelContainer(container)
                 .environmentObject(ServicesContainer(modelContext: container.mainContext))
+                .tint(AppTheme.accent)
                 .task {
                     // Seed data on first launch
                     await seedDataIfNeeded()

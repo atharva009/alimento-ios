@@ -36,6 +36,8 @@ struct ContentView: View {
                     Label("Grocery", systemImage: "cart.fill")
                 }
         }
+        .tint(AppTheme.accent)
+        .background(AppTheme.screenBackground)
     }
 }
 

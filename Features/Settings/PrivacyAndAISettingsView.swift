@@ -59,9 +59,9 @@ struct PrivacyAndAISettingsView: View {
                     
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Raw personal notes or sensitive information", systemImage: "xmark.circle.fill")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(AppTheme.danger)
                         Label("Full conversation history (stored locally only)", systemImage: "xmark.circle.fill")
-                            .foregroundStyle(.red)
+                            .foregroundStyle(AppTheme.danger)
                     }
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -80,10 +80,10 @@ struct PrivacyAndAISettingsView: View {
                     
                     if AIConfiguration.shared.hasAPIKey {
                         Label("AI features are enabled with your API key", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
+                            .foregroundStyle(AppTheme.success)
                     } else {
                         Label("AI features are running in mock mode (no API key configured)", systemImage: "info.circle.fill")
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(AppTheme.warning)
                         
                         Text("To enable live AI features, configure GEMINI_API_KEY in your build settings. See README for setup instructions.")
                             .font(.caption)
@@ -115,8 +115,11 @@ struct PrivacyAndAISettingsView: View {
                 Text("Medical Disclaimer")
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.screenBackground)
         .navigationTitle("Privacy & AI")
         .navigationBarTitleDisplayMode(.large)
+        .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
     }
 }
 

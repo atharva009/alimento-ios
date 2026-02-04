@@ -41,8 +41,7 @@ struct InsightsView: View {
                             }
                             .frame(height: 200)
                             .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
+                            .themedCard()
                             .padding(.horizontal)
                             .accessibilityElement(children: .combine)
                             .accessibilityLabel("Inventory by location chart. \(locationData.map { "\($0.location.capitalized): \($0.count) items" }.joined(separator: ", "))")
@@ -72,8 +71,7 @@ struct InsightsView: View {
                             }
                             .frame(height: 200)
                             .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
+                            .themedCard()
                             .padding(.horizontal)
                             .accessibilityElement(children: .combine)
                             .accessibilityLabel("Grocery items by reason chart. \(groceryItemData.map { "\($0.reason): \($0.count) items" }.joined(separator: ", "))")
@@ -96,14 +94,13 @@ struct InsightsView: View {
                                         x: .value("Day", data.dayName),
                                         y: .value("Meals", data.count)
                                     )
-                                    .foregroundStyle(.blue)
+                                    .foregroundStyle(AppTheme.accent)
                                     .accessibilityLabel("\(data.dayName): \(data.count) meals")
                                 }
                             }
                             .frame(height: 200)
                             .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
+                            .themedCard()
                             .padding(.horizontal)
                             .accessibilityElement(children: .combine)
                             .accessibilityLabel("Planned meals per day chart. \(weeklyMealData.map { "\($0.dayName): \($0.count) meals" }.joined(separator: ", "))")
@@ -112,8 +109,11 @@ struct InsightsView: View {
                     .padding(.bottom)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.screenBackground)
             .navigationTitle("Insights")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
         }
     }
     
@@ -192,8 +192,7 @@ struct EmptyChartView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .themedCard()
     }
 }
 

@@ -38,8 +38,10 @@ struct GroceryListView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .background(AppTheme.screenBackground)
             .navigationTitle("Grocery List")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
@@ -137,6 +139,7 @@ struct GroceryListView: View {
             .padding(.top, 8)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppTheme.screenBackground)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("No grocery items. Generate a list from your planned meals and inventory, or add items manually")
     }
@@ -171,8 +174,14 @@ struct GroceryListView: View {
                                 } label: {
                                     Label("Edit", systemImage: "pencil")
                                 }
-                                .tint(.blue)
+                                .tint(AppTheme.accent)
                             }
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(AppTheme.cardBackground)
+                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 8)
+                            )
                             .contextMenu {
                                 Button {
                                     editingItem = item
@@ -212,7 +221,7 @@ struct GroceryListView: View {
                                 } label: {
                                     Label("Add to Inventory", systemImage: "plus.circle")
                                 }
-                                .tint(.green)
+                                .tint(AppTheme.success)
                                 
                                 Button(role: .destructive) {
                                     Task {
@@ -222,10 +231,18 @@ struct GroceryListView: View {
                                     Label("Delete", systemImage: "trash")
                                 }
                             }
+                            .listRowBackground(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(AppTheme.cardBackground)
+                                    .padding(.vertical, 2)
+                                    .padding(.horizontal, 8)
+                            )
                     }
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .listStyle(.plain)
     }
 }
 
@@ -299,7 +316,7 @@ struct GroceryItemRow: View {
                             .font(.caption)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color(.systemGray5))
+                            .background(AppTheme.surfaceSecondary)
                             .cornerRadius(4)
                             .foregroundStyle(.secondary)
                     }

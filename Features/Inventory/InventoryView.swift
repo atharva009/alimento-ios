@@ -57,8 +57,14 @@ struct InventoryView: View {
                                     } label: {
                                         Label("Edit", systemImage: "pencil")
                                     }
-                                    .tint(.blue)
+                                    .tint(AppTheme.accent)
                                 }
+                                .listRowBackground(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(AppTheme.cardBackground)
+                                        .padding(.vertical, 2)
+                                        .padding(.horizontal, 8)
+                                )
                                 .contextMenu {
                                     Button {
                                         editingItem = item
@@ -78,14 +84,18 @@ struct InventoryView: View {
                                 .accessibilityHint("Swipe left for actions")
                             }
                         }
+                        .scrollContentBackground(.hidden)
+                        .listStyle(.plain)
                     }
                 } else {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
+            .background(AppTheme.screenBackground)
             .navigationTitle("Inventory")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {

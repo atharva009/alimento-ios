@@ -159,7 +159,7 @@ struct MealSuggestionCard: View {
                 .italic()
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(AppTheme.cardBackground)
         .cornerRadius(8)
     }
 }

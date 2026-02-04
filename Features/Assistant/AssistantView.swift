@@ -77,14 +77,16 @@ struct AssistantView: View {
                     } label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.title2)
-                            .foregroundStyle(messageText.isEmpty || (viewModel?.state ?? .idle) != .idle ? .gray : .blue)
+                            .foregroundStyle(messageText.isEmpty || (viewModel?.state ?? .idle) != .idle ? .gray : AppTheme.accent)
                     }
                     .disabled(messageText.isEmpty || (viewModel?.state ?? .idle) != .idle)
                     .accessibilityLabel("Send message")
                 }
                 .padding()
             }
+            .background(AppTheme.screenBackground)
             .navigationTitle("Assistant")
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -171,7 +173,7 @@ struct MessageBubble: View {
                 Text(message.content)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background(isUser ? Color.blue : Color(.systemGray5))
+                    .background(isUser ? AppTheme.accent : AppTheme.surfaceSecondary)
                     .foregroundStyle(isUser ? .white : .primary)
                     .cornerRadius(18)
                 
@@ -198,7 +200,7 @@ struct ToolConfirmationView: View {
             VStack(spacing: 20) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 50))
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(AppTheme.warning)
                 
                 Text("Confirm Action")
                     .font(.headline)

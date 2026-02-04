@@ -50,7 +50,7 @@ struct PlannerWeekView: View {
                                 viewModel.goToToday()
                             }
                             .font(.caption)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(AppTheme.accent)
                         }
                         
                         Spacer()
@@ -93,8 +93,12 @@ struct PlannerWeekView: View {
                         .padding(.horizontal)
                     }
                 }
+                .padding(.bottom)
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.screenBackground)
             .navigationTitle("Meal Planner")
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -193,8 +197,9 @@ struct DayCard: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isToday ? Color.blue.opacity(0.1) : Color(.systemGray6))
-        .cornerRadius(12)
+        .background(isToday ? AppTheme.highlight : AppTheme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius))
+        .shadow(color: .black.opacity(0.06), radius: AppTheme.cardShadowRadius, x: 0, y: AppTheme.cardShadowY)
     }
 }
 
@@ -223,7 +228,7 @@ struct MealTypeSection: View {
                         Text("Add")
                             .font(.caption)
                     }
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(AppTheme.accent)
                 }
                 .buttonStyle(.plain)
             } else {
@@ -257,12 +262,12 @@ struct PlannedMealRow: View {
                 if meal.dish != nil {
                     Image(systemName: "link")
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(AppTheme.accent)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)
-            .background(Color(.systemBackground))
+            .background(AppTheme.surface)
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
@@ -300,10 +305,13 @@ struct EmptyPlannerView: View {
             
             Button("Plan Your First Meal", action: action)
                 .buttonStyle(.borderedProminent)
+                .tint(AppTheme.accent)
                 .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
         .padding()
+        .themedCard()
+        .padding(.horizontal)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("No meals planned. Start planning your meals to stay organized and reduce food waste")
     }

@@ -30,7 +30,9 @@ struct DashboardView: View {
                     if let vm = viewModel {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Summary")
-                                .font(.headline)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(AppTheme.accent)
                                 .padding(.horizontal)
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
@@ -38,7 +40,7 @@ struct DashboardView: View {
                                     title: "Low Stock",
                                     value: "\(vm.lowStockCount)",
                                     icon: "exclamationmark.triangle.fill",
-                                    color: .orange,
+                                    color: AppTheme.warning,
                                     destination: .inventory
                                 )
                                 
@@ -46,7 +48,7 @@ struct DashboardView: View {
                                     title: "Expiring Soon",
                                     value: "\(vm.expiringSoonCount)",
                                     icon: "clock.fill",
-                                    color: .red,
+                                    color: AppTheme.danger,
                                     destination: .inventory
                                 )
                                 
@@ -54,7 +56,7 @@ struct DashboardView: View {
                                     title: "Today's Meals",
                                     value: "\(vm.todayMealsCount)",
                                     icon: "calendar",
-                                    color: .green,
+                                    color: AppTheme.planner,
                                     destination: .planner
                                 )
                                 
@@ -62,7 +64,7 @@ struct DashboardView: View {
                                     title: "Grocery Remaining",
                                     value: "\(vm.groceryRemainingCount)",
                                     icon: "cart.fill",
-                                    color: .cyan,
+                                    color: AppTheme.grocery,
                                     destination: .grocery
                                 )
                             }
@@ -74,14 +76,16 @@ struct DashboardView: View {
                     // Quick Actions Section
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Quick Actions")
-                            .font(.headline)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(AppTheme.accent)
                             .padding(.horizontal)
                         
                         VStack(spacing: 8) {
                             QuickActionRow(
                                 icon: "plus.circle.fill",
                                 title: "Add Inventory Item",
-                                color: .blue,
+                                color: AppTheme.inventory,
                                 action: { showingAddInventory = true }
                             )
                             .popoverTip(InventoryAddTip(), arrowEdge: .bottom)
@@ -89,14 +93,14 @@ struct DashboardView: View {
                             QuickActionRow(
                                 icon: "fork.knife",
                                 title: "Log Dish",
-                                color: .purple,
+                                color: AppTheme.cookLog,
                                 action: { showingLogDish = true }
                             )
                             
                             QuickActionRow(
                                 icon: "calendar.badge.plus",
                                 title: "Plan Meal",
-                                color: .green,
+                                color: AppTheme.planner,
                                 action: { showingPlanMeal = true }
                             )
                             .popoverTip(PlannerAddMealTip(), arrowEdge: .bottom)
@@ -112,21 +116,21 @@ struct DashboardView: View {
                                 QuickActionRow(
                                     icon: "sparkles",
                                     title: "Suggest Meals",
-                                    color: .indigo,
+                                    color: AppTheme.ai,
                                     action: { showingMealSuggestions = true }
                                 )
                                 
                                 QuickActionRow(
                                     icon: "calendar.badge.plus",
                                     title: "Generate Weekly Plan",
-                                    color: .indigo,
+                                    color: AppTheme.ai,
                                     action: { showingWeeklyPlan = true }
                                 )
                                 
                                 QuickActionRow(
                                     icon: "cart.badge.plus",
                                     title: "Generate Grocery List",
-                                    color: .indigo,
+                                    color: AppTheme.ai,
                                     action: { showingGrocerySuggestions = true }
                                 )
                                 .popoverTip(GenerateGroceryListTip(), arrowEdge: .bottom)
@@ -140,7 +144,9 @@ struct DashboardView: View {
                     if let vm = viewModel {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Next Up")
-                                .font(.headline)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(AppTheme.accent)
                                 .padding(.horizontal)
                             
                             if vm.todaysMeals.isEmpty {
@@ -163,7 +169,10 @@ struct DashboardView: View {
                 }
                 .padding(.bottom)
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.screenBackground)
             .navigationTitle("Dashboard")
+            .toolbarBackground(AppTheme.barBackground, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
@@ -266,8 +275,7 @@ struct SummaryCard: View {
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(12)
+            .themedCard()
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
@@ -302,8 +310,7 @@ struct QuickActionRow: View {
                     .foregroundStyle(.secondary)
             }
             .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
+            .themedCard()
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
@@ -330,12 +337,12 @@ struct EmptyNextUpView: View {
             
             Button("Plan Meal", action: action)
                 .buttonStyle(.borderedProminent)
+                .tint(AppTheme.accent)
                 .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .themedCard()
     }
 }
 
@@ -360,18 +367,17 @@ struct MealTypeGroup: View {
                     if meal.dish != nil {
                         Image(systemName: "link")
                             .font(.caption)
-                            .foregroundStyle(.blue)
+                            .foregroundStyle(AppTheme.accent)
                     }
                 }
                 .padding(.vertical, 6)
                 .padding(.horizontal, 12)
-                .background(Color(.systemBackground))
+                .background(AppTheme.surfaceSecondary)
                 .cornerRadius(8)
             }
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .themedCard()
     }
 }
 
@@ -398,8 +404,7 @@ struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .themedCard()
     }
 }
 
@@ -415,14 +420,14 @@ struct DataStatusRow: View {
             if count >= expected {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundStyle(AppTheme.success)
                     Text("\(count)")
                         .bold()
                 }
             } else {
                 HStack(spacing: 4) {
                     Image(systemName: "clock.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(AppTheme.warning)
                     Text("\(count)/\(expected)")
                 }
             }
