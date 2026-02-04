@@ -311,7 +311,12 @@ struct EmptyPlannerView: View {
 }
 
 #Preview {
-    PlannerWeekView()
-        .modelContainer(for: [PlannedMeal.self, Dish.self])
-        .environmentObject(PlannerViewModel(plannerService: PlannerServiceImpl(modelContext: ModelContext(try! ModelContainer(for: PlannedMeal.self))), dishLogService: DishLogServiceImpl(modelContext: ModelContext(try! ModelContainer(for: PlannedMeal.self)), inventoryService: InventoryServiceImpl(modelContext: ModelContext(try! ModelContainer(for: PlannedMeal.self))))))
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    let viewModel = PlannerViewModel(
+        plannerService: services.plannerService,
+        dishLogService: services.dishLogService
+    )
+    return PlannerWeekView()
+        .modelContainer(modelContainer)
+        .environmentObject(viewModel)
 }

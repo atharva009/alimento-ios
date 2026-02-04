@@ -3,14 +3,22 @@
 //  Alimento
 //
 //  Configuration for the AI backend proxy. The API key stays on the server.
+//  Reads BackendBaseURL from Info.plist so you can change it per scheme/config without code edits.
 //
 
 import Foundation
 
 enum BackendConfig {
-    /// Base URL of the Alimento Gemini proxy (e.g. http://localhost:3000)
-    /// - For Simulator: use http://localhost:3000
-    /// - For physical device: use your machine's IP, e.g. http://192.168.1.100:3000
-    /// - For production: use your deployed backend URL
-    static let baseURL: String? = "http://localhost:3000"
+    /// Base URL of the Alimento Gemini proxy. Read from Info.plist key `BackendBaseURL`, with fallback for local dev.
+    /// - Set in Info.plist or xcconfig for your environment (Simulator: localhost, device: machine IP, production: deployed URL).
+    static var baseURL: String? {
+        (Bundle.main.object(forInfoDictionaryKey: "BackendBaseURL") as? String)?
+            .trimmingCharacters(in: .whitespaces)
+            .nonEmpty
+            ?? "http://localhost:3000"
+    }
+}
+
+private extension String {
+    var nonEmpty: String? { isEmpty ? nil : self }
 }

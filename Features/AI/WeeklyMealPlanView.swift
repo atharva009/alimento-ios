@@ -10,21 +10,16 @@ import SwiftData
 
 struct WeeklyMealPlanView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var services: ServicesContainer
     @Query private var userProfiles: [UserProfile]
     
     @State private var mealPlan: WeeklyMealPlan?
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    @State private var showingError = false
-    
-    private var aiService: AIService {
-        AIServiceImpl()
-    }
+    @State private var state = AISuggestionState()
     
     var body: some View {
         NavigationStack {
             Group {
-                if isLoading {
+                if state.isLoading {
                     ProgressView("Generating weekly meal plan...")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let plan = mealPlan {
@@ -71,44 +66,35 @@ struct WeeklyMealPlanView: View {
                         dismiss()
                     }
                 }
-                
                 ToolbarItem(placement: .primaryAction) {
                     Button("Generate") {
                         generatePlan()
                     }
-                    .disabled(isLoading)
+                    .disabled(state.isLoading)
                 }
             }
-            .alert("Error", isPresented: $showingError) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(errorMessage ?? "An error occurred")
-            }
+            .appAlert($state.alert)
         }
     }
     
     private func generatePlan() {
-        isLoading = true
-        errorMessage = nil
-        
+        state.startLoading()
         let profile = userProfiles.first ?? UserProfile()
         
         Task {
             do {
-                let plan = try await aiService.generateWeeklyMealPlan(
+                let plan = try await services.aiService.generateWeeklyMealPlan(
                     preferences: profile,
                     mealsPerDay: 3,
                     busyDays: nil
                 )
                 await MainActor.run {
                     self.mealPlan = plan
-                    isLoading = false
+                    state.finishLoading()
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    showingError = true
-                    isLoading = false
+                    state.setError(error, retryAction: { generatePlan() })
                 }
             }
         }
@@ -179,7 +165,8 @@ struct MealRow: View {
 }
 
 #Preview {
-    WeeklyMealPlanView()
-        .modelContainer(for: [UserProfile.self])
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    return WeeklyMealPlanView()
+        .modelContainer(modelContainer)
+        .environmentObject(services)
 }
-

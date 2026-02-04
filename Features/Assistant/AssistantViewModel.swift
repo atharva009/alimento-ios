@@ -23,6 +23,7 @@ final class AssistantViewModel: ObservableObject {
     private let toolRegistry: ToolRegistry
     private let jsonGuard: JSONGuard?
     private let geminiClient: GeminiClient?
+    private weak var servicesContainer: ServicesContainer?
     
     enum AssistantState {
         case idle
@@ -43,13 +44,15 @@ final class AssistantViewModel: ObservableObject {
         aiService: AIService,
         toolRegistry: ToolRegistry,
         jsonGuard: JSONGuard?,
-        geminiClient: GeminiClient?
+        geminiClient: GeminiClient?,
+        servicesContainer: ServicesContainer? = nil
     ) {
         self.modelContext = modelContext
         self.aiService = aiService
         self.toolRegistry = toolRegistry
         self.jsonGuard = jsonGuard
         self.geminiClient = geminiClient
+        self.servicesContainer = servicesContainer
         
         // Add welcome message
         addSystemMessage("Hello! I'm your meal planning assistant. I can help you manage your inventory, plan meals, and generate grocery lists. What would you like to do?")
@@ -328,17 +331,16 @@ final class AssistantViewModel: ObservableObject {
     }
     
     private func buildToolExecutionContext() -> ToolExecutionContext {
-        let servicesContainer = ServicesContainer(modelContext: modelContext)
-        
+        let container = servicesContainer ?? ServicesContainer(modelContext: modelContext)
         let userProfileDescriptor = FetchDescriptor<UserProfile>()
         let userProfile = try? modelContext.fetch(userProfileDescriptor).first
         
         return ToolExecutionContext(
             modelContext: modelContext,
-            inventoryService: servicesContainer.inventoryService,
-            dishLogService: servicesContainer.dishLogService,
-            plannerService: servicesContainer.plannerService,
-            groceryService: servicesContainer.groceryService,
+            inventoryService: container.inventoryService,
+            dishLogService: container.dishLogService,
+            plannerService: container.plannerService,
+            groceryService: container.groceryService,
             userProfile: userProfile
         )
     }

@@ -432,16 +432,9 @@ struct DataStatusRow: View {
 }
 
 #Preview {
-    DashboardView()
-        .modelContainer(for: [
-            UserProfile.self,
-            InventoryItem.self,
-            Dish.self,
-            DishIngredient.self,
-            PlannedMeal.self,
-            GroceryList.self,
-            GroceryItem.self,
-            AiEventLog.self
-        ])
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    return DashboardView()
+        .modelContainer(modelContainer)
+        .environmentObject(services)
 }
 

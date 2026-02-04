@@ -9,8 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct AssistantView: View {
+    @EnvironmentObject private var services: ServicesContainer
     @Environment(\.modelContext) private var modelContext
-    @Query private var userProfiles: [UserProfile]
     
     @State private var viewModel: AssistantViewModel?
     @State private var messageText = ""
@@ -126,22 +126,7 @@ struct AssistantView: View {
         }
         .onAppear {
             if viewModel == nil {
-                let config = AIConfiguration.shared
-                var jsonGuard: JSONGuard? = nil
-                var geminiClient: GeminiClient? = nil
-                
-                if config.mode == .live, let backendURL = try? config.getBackendBaseURL() {
-                    geminiClient = GeminiClient(backendBaseURL: backendURL)
-                    jsonGuard = JSONGuard(client: geminiClient!)
-                }
-                
-                viewModel = AssistantViewModel(
-                    modelContext: modelContext,
-                    aiService: AIServiceImpl(),
-                    toolRegistry: createToolRegistry(),
-                    jsonGuard: jsonGuard,
-                    geminiClient: geminiClient
-                )
+                viewModel = services.makeAssistantViewModel()
             }
         }
     }
@@ -270,25 +255,9 @@ struct EmptyAssistantView: View {
     }
 }
 
-// Helper function to create tool registry
-private func createToolRegistry() -> ToolRegistry {
-    let executors: [ToolName: ToolExecutor] = [
-        .addInventoryItem: AddInventoryItemExecutor(),
-        .updateInventoryQuantity: UpdateInventoryQuantityExecutor(),
-        .createPlannedMeal: CreatePlannedMealExecutor(),
-        .generateGroceryList: GenerateGroceryListExecutor(),
-        .logCookedDish: LogCookedDishExecutor()
-    ]
-    return ToolRegistry(executors: executors)
-}
-
 #Preview {
-    AssistantView()
-        .modelContainer(for: [
-            UserProfile.self,
-            InventoryItem.self,
-            Dish.self,
-            PlannedMeal.self,
-            GroceryList.self
-        ])
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    return AssistantView()
+        .modelContainer(modelContainer)
+        .environmentObject(services)
 }

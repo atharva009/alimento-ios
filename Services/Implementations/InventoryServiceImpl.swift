@@ -70,11 +70,11 @@ final class InventoryServiceImpl: InventoryService {
     }
     
     func deleteItem(_ item: InventoryItem) async throws {
-        // Check if item is referenced by dishes
+        // Check if item is referenced by any DishIngredient (fetch then filter; SwiftData predicate on optional relationship is limited)
         let dishDescriptor = FetchDescriptor<DishIngredient>()
         let allIngredients = (try? modelContext.fetch(dishDescriptor)) ?? []
-        let referencedIngredients = allIngredients.filter { ingredient in
-            ingredient.inventoryItem?.persistentModelID == item.persistentModelID
+        let referencedIngredients = allIngredients.filter {
+            $0.inventoryItem?.persistentModelID == item.persistentModelID
         }
         
         if !referencedIngredients.isEmpty {

@@ -10,26 +10,20 @@ import SwiftData
 
 struct MealSuggestionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var services: ServicesContainer
     @Query private var inventoryItems: [InventoryItem]
     @Query private var userProfiles: [UserProfile]
     
     @State private var suggestions: [MealSuggestion] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    @State private var showingError = false
-    
-    private var aiService: AIService {
-        AIServiceImpl()
-    }
+    @State private var state = AISuggestionState()
     
     var body: some View {
         NavigationStack {
             Group {
-                if isLoading {
+                if state.isLoading {
                     ProgressView("Generating meal suggestions...")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if suggestions.isEmpty && !isLoading {
+                } else if suggestions.isEmpty && !state.isLoading {
                     ContentUnavailableView {
                         Label("No Suggestions", systemImage: "fork.knife")
                     } description: {
@@ -55,44 +49,35 @@ struct MealSuggestionsView: View {
                         dismiss()
                     }
                 }
-                
                 ToolbarItem(placement: .primaryAction) {
                     Button("Generate") {
                         generateSuggestions()
                     }
-                    .disabled(isLoading)
+                    .disabled(state.isLoading)
                 }
             }
-            .alert("Error", isPresented: $showingError) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(errorMessage ?? "An error occurred")
-            }
+            .appAlert($state.alert)
         }
     }
     
     private func generateSuggestions() {
-        isLoading = true
-        errorMessage = nil
-        
+        state.startLoading()
         let profile = userProfiles.first ?? UserProfile()
         
         Task {
             do {
-                let results = try await aiService.suggestMealsFromInventory(
+                let results = try await services.aiService.suggestMealsFromInventory(
                     inventoryItems: inventoryItems,
                     preferences: profile,
                     timeConstraint: nil
                 )
                 await MainActor.run {
                     suggestions = results
-                    isLoading = false
+                    state.finishLoading()
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    showingError = true
-                    isLoading = false
+                    state.setError(error, retryAction: { generateSuggestions() })
                 }
             }
         }
@@ -180,7 +165,8 @@ struct MealSuggestionCard: View {
 }
 
 #Preview {
-    MealSuggestionsView()
-        .modelContainer(for: [InventoryItem.self, UserProfile.self])
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    return MealSuggestionsView()
+        .modelContainer(modelContainer)
+        .environmentObject(services)
 }
-

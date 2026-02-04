@@ -10,28 +10,13 @@ import SwiftData
 
 struct GrocerySuggestionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var services: ServicesContainer
     @Query private var plannedMeals: [PlannedMeal]
     @Query private var inventoryItems: [InventoryItem]
     
     @State private var suggestions: [GroceryItemSuggestion] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    @State private var showingError = false
+    @State private var state = AISuggestionState()
     @State private var showingApplyConfirmation = false
-    
-    private var aiService: AIService {
-        AIServiceImpl()
-    }
-    
-    private var groceryService: GroceryService {
-        let plannerService = PlannerServiceImpl(modelContext: modelContext)
-        return GroceryServiceImpl(
-            modelContext: modelContext,
-            inventoryService: InventoryServiceImpl(modelContext: modelContext),
-            plannerService: plannerService
-        )
-    }
     
     var lowStockItems: [InventoryItem] {
         inventoryItems.filter { $0.isLowStock }
@@ -40,10 +25,10 @@ struct GrocerySuggestionsView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if isLoading {
+                if state.isLoading {
                     ProgressView("Generating grocery list...")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if suggestions.isEmpty && !isLoading {
+                } else if suggestions.isEmpty && !state.isLoading {
                     ContentUnavailableView {
                         Label("No Suggestions", systemImage: "cart")
                     } description: {
@@ -69,7 +54,6 @@ struct GrocerySuggestionsView: View {
                         dismiss()
                     }
                 }
-                
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
@@ -77,7 +61,6 @@ struct GrocerySuggestionsView: View {
                         } label: {
                             Label("Regenerate", systemImage: "arrow.clockwise")
                         }
-                        
                         if !suggestions.isEmpty {
                             Button {
                                 showingApplyConfirmation = true
@@ -90,11 +73,7 @@ struct GrocerySuggestionsView: View {
                     }
                 }
             }
-            .alert("Error", isPresented: $showingError) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(errorMessage ?? "An error occurred")
-            }
+            .appAlert($state.alert)
             .alert("Apply to Grocery List", isPresented: $showingApplyConfirmation) {
                 Button("Cancel", role: .cancel) { }
                 Button("Apply") {
@@ -107,25 +86,21 @@ struct GrocerySuggestionsView: View {
     }
     
     private func generateSuggestions() {
-        isLoading = true
-        errorMessage = nil
-        
+        state.startLoading()
         Task {
             do {
-                let results = try await aiService.generateGroceryList(
+                let results = try await services.aiService.generateGroceryList(
                     plannedMeals: plannedMeals,
                     currentInventory: inventoryItems,
                     lowStockItems: lowStockItems
                 )
                 await MainActor.run {
                     suggestions = results
-                    isLoading = false
+                    state.finishLoading()
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    showingError = true
-                    isLoading = false
+                    state.setError(error, retryAction: { generateSuggestions() })
                 }
             }
         }
@@ -134,19 +109,15 @@ struct GrocerySuggestionsView: View {
     private func applyToGroceryList() {
         Task {
             do {
-                // Get or create active list
-                var activeList = try await groceryService.fetchActiveGroceryList()
+                var activeList = try await services.groceryService.fetchActiveGroceryList()
                 if activeList == nil {
-                    activeList = try await groceryService.createGroceryList(daysAhead: 7)
+                    activeList = try await services.groceryService.createGroceryList(daysAhead: 7)
                 }
-                
                 guard let list = activeList else {
                     throw DomainError.groceryListNotFound
                 }
-                
-                // Add items
                 for item in suggestions {
-                    _ = try await groceryService.addItemToList(
+                    _ = try await services.groceryService.addItemToList(
                         list,
                         name: item.name,
                         quantity: item.quantity,
@@ -155,14 +126,12 @@ struct GrocerySuggestionsView: View {
                         priority: item.priority
                     )
                 }
-                
                 await MainActor.run {
                     dismiss()
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = error.localizedDescription
-                    showingError = true
+                    state.setError(error)
                 }
             }
         }
@@ -186,15 +155,12 @@ struct GrocerySuggestionRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.name)
                     .font(.headline)
-                
                 HStack(spacing: 8) {
                     Text("\(String(format: "%.2f", item.quantity)) \(item.unit)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    
                     Text("•")
                         .foregroundStyle(.secondary)
-                    
                     Text(item.reason.replacingOccurrences(of: "_", with: " ").capitalized)
                         .font(.caption)
                         .padding(.horizontal, 6)
@@ -204,9 +170,7 @@ struct GrocerySuggestionRow: View {
                         .cornerRadius(4)
                 }
             }
-            
             Spacer()
-            
             if item.priority == 1 {
                 Image(systemName: "exclamationmark.circle.fill")
                     .foregroundStyle(.red)
@@ -218,7 +182,8 @@ struct GrocerySuggestionRow: View {
 }
 
 #Preview {
-    GrocerySuggestionsView()
-        .modelContainer(for: [PlannedMeal.self, InventoryItem.self, GroceryList.self])
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    return GrocerySuggestionsView()
+        .modelContainer(modelContainer)
+        .environmentObject(services)
 }
-

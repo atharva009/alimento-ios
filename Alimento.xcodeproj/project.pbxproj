@@ -84,6 +84,11 @@
 		45F422A82EF925DB00BB2CA4 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F422A62EF925DB00BB2CA4 /* HapticFeedback.swift */; };
 		45F422B12EF9D54500BB2CA4 /* PrivacyAndAISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F422AF2EF9D54500BB2CA4 /* PrivacyAndAISettingsView.swift */; };
 		45F422BC2EF9DDC200BB2CA4 /* BackendConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F422BD2EF9DDC200BB2CA4 /* BackendConfig.swift */; };
+		45F42C012EF9E10000BB2CA4 /* AISuggestionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F42C032EF9E10000BB2CA4 /* AISuggestionState.swift */; };
+		45F42C022EF9E10000BB2CA4 /* PreviewServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F42C042EF9E10000BB2CA4 /* PreviewServices.swift */; };
+		45F42C062EF9E10000BB2CA4 /* AppAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F42C082EF9E10000BB2CA4 /* AppAlert.swift */; };
+		45F42C072EF9E10000BB2CA4 /* ErrorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F42C092EF9E10000BB2CA4 /* ErrorMapper.swift */; };
+		45F42C0B2EF9E20000BB2CA4 /* AIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F42C0C2EF9E20000BB2CA4 /* AIModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -177,6 +182,11 @@
 		45F422A62EF925DB00BB2CA4 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedback.swift; sourceTree = "<group>"; };
 		45F422AF2EF9D54500BB2CA4 /* PrivacyAndAISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyAndAISettingsView.swift; sourceTree = "<group>"; };
 		45F422BD2EF9DDC200BB2CA4 /* BackendConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendConfig.swift; sourceTree = "<group>"; };
+		45F42C032EF9E10000BB2CA4 /* AISuggestionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISuggestionState.swift; sourceTree = "<group>"; };
+		45F42C042EF9E10000BB2CA4 /* PreviewServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewServices.swift; sourceTree = "<group>"; };
+		45F42C082EF9E10000BB2CA4 /* AppAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAlert.swift; sourceTree = "<group>"; };
+		45F42C092EF9E10000BB2CA4 /* ErrorMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMapper.swift; sourceTree = "<group>"; };
+		45F42C0C2EF9E20000BB2CA4 /* AIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -388,10 +398,30 @@
 		45F421132EF8E48700BB2CA4 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				45F422A72EF925DB00BB2CA4 /* Haptics */,
+				45F42C052EF9E10000BB2CA4 /* AI */,
+				45F42C0A2EF9E10000BB2CA4 /* ErrorHandling */,
 				45F422752EF90B8A00BB2CA4 /* Errors */,
+				45F422A72EF925DB00BB2CA4 /* Haptics */,
+				45F42C042EF9E10000BB2CA4 /* PreviewServices.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		45F42C0A2EF9E10000BB2CA4 /* ErrorHandling */ = {
+			isa = PBXGroup;
+			children = (
+				45F42C082EF9E10000BB2CA4 /* AppAlert.swift */,
+				45F42C092EF9E10000BB2CA4 /* ErrorMapper.swift */,
+			);
+			path = ErrorHandling;
+			sourceTree = "<group>";
+		};
+		45F42C052EF9E10000BB2CA4 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				45F42C032EF9E10000BB2CA4 /* AISuggestionState.swift */,
+			);
+			path = AI;
 			sourceTree = "<group>";
 		};
 		45F422552EF90B1F00BB2CA4 /* AI */ = {
@@ -494,6 +524,7 @@
 		45F4228F2EF916CC00BB2CA4 /* AI */ = {
 			isa = PBXGroup;
 			children = (
+				45F42C0C2EF9E20000BB2CA4 /* AIModels.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -728,6 +759,11 @@
 				45F4216F2EF8F16400BB2CA4 /* DishListView.swift in Sources */,
 				45F422A22EF925BA00BB2CA4 /* InsightsView.swift in Sources */,
 				45F421702EF8F16400BB2CA4 /* LogDishFormView.swift in Sources */,
+				45F42C012EF9E10000BB2CA4 /* AISuggestionState.swift in Sources */,
+				45F42C022EF9E10000BB2CA4 /* PreviewServices.swift in Sources */,
+				45F42C062EF9E10000BB2CA4 /* AppAlert.swift in Sources */,
+				45F42C072EF9E10000BB2CA4 /* ErrorMapper.swift in Sources */,
+				45F42C0B2EF9E20000BB2CA4 /* AIModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

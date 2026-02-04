@@ -9,27 +9,17 @@ import SwiftUI
 import SwiftData
 
 struct GroceryListView: View {
-    @Environment(\.modelContext) private var modelContext
+    private let services: ServicesContainer
     @State private var viewModel: GroceryViewModel?
+
+    init(services: ServicesContainer) {
+        self.services = services
+    }
     @State private var showingAddItem = false
     @State private var showingGenerateSheet = false
     @State private var editingItem: GroceryItem?
     @State private var selectedItem: GroceryItem?
     @State private var showingAddToInventory = false
-    
-    private var groceryService: GroceryService {
-        let inventoryService = InventoryServiceImpl(modelContext: modelContext)
-        let plannerService = PlannerServiceImpl(modelContext: modelContext)
-        return GroceryServiceImpl(modelContext: modelContext, inventoryService: inventoryService, plannerService: plannerService)
-    }
-    
-    private var plannerService: PlannerService {
-        PlannerServiceImpl(modelContext: modelContext)
-    }
-    
-    private var inventoryService: InventoryService {
-        InventoryServiceImpl(modelContext: modelContext)
-    }
     
     var body: some View {
         NavigationStack {
@@ -99,10 +89,11 @@ struct GroceryListView: View {
                 Text(viewModel?.errorMessage ?? "An error occurred")
             }
             .task {
-                let service = groceryService
-                let planService = plannerService
-                let invService = inventoryService
-                let vm = GroceryViewModel(groceryService: service, plannerService: planService, inventoryService: invService)
+                let vm = GroceryViewModel(
+                    groceryService: services.groceryService,
+                    plannerService: services.plannerService,
+                    inventoryService: services.inventoryService
+                )
                 viewModel = vm
                 await vm.loadActiveList()
             }
@@ -340,12 +331,7 @@ struct GroceryItemRow: View {
 }
 
 #Preview {
-    GroceryListView()
-        .modelContainer(for: [
-            GroceryList.self,
-            GroceryItem.self,
-            PlannedMeal.self,
-            Dish.self,
-            InventoryItem.self
-        ])
+    let (modelContainer, services) = PreviewServices.previewContainer()
+    return GroceryListView(services: services)
+        .modelContainer(modelContainer)
 }

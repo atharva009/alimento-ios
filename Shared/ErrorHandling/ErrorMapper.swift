@@ -15,8 +15,9 @@ enum ErrorMapper {
             return domainError.errorDescription ?? "An error occurred"
         } else if let aiError = error as? AIError {
             return aiError.errorDescription ?? "An AI error occurred"
-        } else if let nsError = error as NSError {
-            // Handle SwiftData/CoreData errors
+        } else {
+            // Handle SwiftData/CoreData and other NSError-backed errors
+            let nsError = error as NSError
             if nsError.domain == "NSCocoaErrorDomain" {
                 switch nsError.code {
                 case 133020: // NSValidationMultipleErrorsError
@@ -37,7 +38,6 @@ enum ErrorMapper {
             }
             return nsError.localizedDescription
         }
-        return error.localizedDescription
     }
     
     /// Determines if an error is recoverable (user can retry)
@@ -61,11 +61,8 @@ enum ErrorMapper {
         }
         
         // Network errors are generally recoverable
-        if let nsError = error as NSError {
-            return nsError.domain == NSURLErrorDomain
-        }
-        
-        return false
+        let nsError = error as NSError
+        return nsError.domain == NSURLErrorDomain
     }
 }
 

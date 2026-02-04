@@ -16,13 +16,23 @@ const http = require('http');
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const MAX_BODY_SIZE = 1024 * 1024; // 1MB
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 function parseJsonBody(req) {
   return new Promise((resolve, reject) => {
     let body = '';
-    req.on('data', (chunk) => { body += chunk; });
+    let size = 0;
+    req.on('data', (chunk) => {
+      size += chunk.length;
+      if (size > MAX_BODY_SIZE) {
+        req.destroy();
+        reject(new Error('Request body too large'));
+        return;
+      }
+      body += chunk;
+    });
     req.on('end', () => {
       try {
         resolve(body ? JSON.parse(body) : {});
@@ -76,21 +86,41 @@ async function callGemini(prompt, systemInstruction) {
   return parts[0].text || '';
 }
 
+function logRequest(method, url, statusCode, durationMs) {
+  const msg = `${method} ${url} ${statusCode} ${durationMs}ms`;
+  if (statusCode >= 400) {
+    console.error(msg);
+  } else {
+    console.log(msg);
+  }
+}
+
 const server = http.createServer(async (req, res) => {
+  const start = Date.now();
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     res.end();
+    logRequest(req.method, req.url, 204, Date.now() - start);
+    return;
+  }
+
+  // Health check: no Gemini call, for probes and load balancers
+  if (req.method === 'GET' && (req.url === '/health' || req.url === '/')) {
+    res.writeHead(200);
+    res.end(JSON.stringify({ ok: true, service: 'alimento-gemini-proxy' }));
+    logRequest(req.method, req.url, 200, Date.now() - start);
     return;
   }
 
   if (req.method !== 'POST' || req.url !== '/api/generate') {
     res.writeHead(404);
     res.end(JSON.stringify({ error: 'Not found' }));
+    logRequest(req.method, req.url, 404, Date.now() - start);
     return;
   }
 
@@ -101,17 +131,20 @@ const server = http.createServer(async (req, res) => {
     if (!prompt || typeof prompt !== 'string') {
       res.writeHead(400);
       res.end(JSON.stringify({ error: 'Missing or invalid "prompt"' }));
+      logRequest(req.method, req.url, 400, Date.now() - start);
       return;
     }
 
     const text = await callGemini(prompt, systemInstruction || null);
     res.writeHead(200);
     res.end(JSON.stringify({ text }));
+    logRequest(req.method, req.url, 200, Date.now() - start);
   } catch (err) {
     const status = err.status || 500;
     const message = err.message || 'Internal server error';
     res.writeHead(status);
     res.end(JSON.stringify({ error: message }));
+    logRequest(req.method, req.url, status, Date.now() - start);
   }
 });
 
@@ -120,5 +153,6 @@ server.listen(PORT, () => {
     console.warn('⚠️  GEMINI_API_KEY not set. Set it before making requests.');
   }
   console.log(`Gemini proxy running at http://localhost:${PORT}`);
+  console.log('  GET /health - health check');
   console.log('  POST /api/generate { "prompt": "...", "systemInstruction": "..." }');
 });
