@@ -18,7 +18,7 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const MAX_BODY_SIZE = 1024 * 1024; // 1MB
 
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent';
 
 function parseJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ function parseJsonBody(req) {
   });
 }
 
-async function callGemini(prompt, systemInstruction) {
+async function callGemini(prompt, systemInstruction, generationConfig) {
   const contents = [];
   if (systemInstruction) {
     contents.push({
@@ -57,11 +57,16 @@ async function callGemini(prompt, systemInstruction) {
     parts: [{ text: prompt }],
   });
 
+  const requestBody = { contents };
+  if (generationConfig && Object.keys(generationConfig).length > 0) {
+    requestBody.generationConfig = generationConfig;
+  }
+
   const url = `${GEMINI_URL}?key=${GEMINI_API_KEY}`;
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents }),
+    body: JSON.stringify(requestBody),
   });
 
   const data = await response.json();
@@ -126,7 +131,7 @@ const server = http.createServer(async (req, res) => {
 
   try {
     const body = await parseJsonBody(req);
-    const { prompt, systemInstruction } = body;
+    const { prompt, systemInstruction, generationConfig } = body;
 
     if (!prompt || typeof prompt !== 'string') {
       res.writeHead(400);
@@ -135,7 +140,16 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    const text = await callGemini(prompt, systemInstruction || null);
+    const safeConfig =
+      generationConfig && typeof generationConfig === 'object'
+        ? {
+            ...(generationConfig.responseMimeType && { responseMimeType: generationConfig.responseMimeType }),
+            ...(generationConfig.responseJsonSchema && { responseJsonSchema: generationConfig.responseJsonSchema }),
+            ...(generationConfig.maxOutputTokens != null && { maxOutputTokens: Number(generationConfig.maxOutputTokens) }),
+          }
+        : null;
+
+    const text = await callGemini(prompt, systemInstruction || null, safeConfig);
     res.writeHead(200);
     res.end(JSON.stringify({ text }));
     logRequest(req.method, req.url, 200, Date.now() - start);

@@ -9,12 +9,10 @@ import Foundation
 
 // Protocol for Gemini client to enable testing
 protocol GeminiClientProtocol {
-    func generateContent(prompt: String, systemInstruction: String?) async throws -> String
+    func generateContent(prompt: String, systemInstruction: String?, generationConfig: [String: Any]?) async throws -> String
 }
 
-extension GeminiClient: GeminiClientProtocol {
-    // GeminiClient already implements generateContent, so no changes needed
-}
+extension GeminiClient: GeminiClientProtocol {}
 
 final class JSONGuard {
     private let client: GeminiClientProtocol
@@ -29,10 +27,13 @@ final class JSONGuard {
         primaryPrompt: String,
         systemInstruction: String? = nil
     ) async throws -> T {
+        let generationConfig: [String: Any] = ["maxOutputTokens": 4096]
+
         // First attempt
         let firstResponse = try await client.generateContent(
             prompt: buildPrompt(schemaDescription: schemaDescription, userPrompt: primaryPrompt),
-            systemInstruction: systemInstruction
+            systemInstruction: systemInstruction,
+            generationConfig: generationConfig
         )
         
         if let decoded = try? decodeJSON(from: firstResponse, as: modelType) {
@@ -48,14 +49,14 @@ final class JSONGuard {
         
         let secondResponse = try await client.generateContent(
             prompt: correctionPrompt,
-            systemInstruction: systemInstruction
+            systemInstruction: systemInstruction,
+            generationConfig: generationConfig
         )
         
         if let decoded = try? decodeJSON(from: secondResponse, as: modelType) {
             return decoded
         }
         
-        // Both attempts failed
         throw AIError.malformedJSON(message: "AI returned malformed output after retry. Please try again.")
     }
     

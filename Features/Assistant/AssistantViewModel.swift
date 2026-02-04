@@ -130,7 +130,7 @@ final class AssistantViewModel: ObservableObject {
                 return
             }
             
-            let responseText = try await client.generateContent(
+            _ = try await client.generateContent(
                 prompt: fullPrompt,
                 systemInstruction: systemInstruction
             )
@@ -244,7 +244,7 @@ final class AssistantViewModel: ObservableObject {
             let prompt = AssistantPromptBuilder.buildToolResultPrompt(toolResult: toolResult)
             let systemInstruction = AssistantPromptBuilder.buildSystemInstruction()
             
-            let responseText = try await client.generateContent(
+            _ = try await client.generateContent(
                 prompt: prompt,
                 systemInstruction: systemInstruction
             )
@@ -320,7 +320,7 @@ final class AssistantViewModel: ObservableObject {
         
         let groceryListSummary: AssistantGroceryListSummary? = activeList.map { list in
             let items = list.items ?? []
-            let topItems = Array(items.prefix(5)).compactMap { ($0 as? GroceryItem)?.name }
+            let topItems = items.prefix(5).map(\.name)
             return AssistantGroceryListSummary(
                 itemCount: items.count,
                 topItems: topItems

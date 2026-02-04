@@ -19,7 +19,6 @@ struct PlannerWeekView: View {
     private let mealTypes = ["breakfast", "lunch", "dinner", "snack"]
     
     private var dayNames: [String] {
-        let calendar = Calendar.current
         let formatter = DateFormatter()
         formatter.dateFormat = "EEE"
         

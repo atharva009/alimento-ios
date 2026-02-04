@@ -27,7 +27,8 @@ final class GeminiClient {
 
     func generateContent(
         prompt: String,
-        systemInstruction: String? = nil
+        systemInstruction: String? = nil,
+        generationConfig: [String: Any]? = nil
     ) async throws -> String {
         guard let url = URL(string: "\(baseURL)/api/generate") else {
             throw AIError.invalidRequest(message: "Invalid backend URL")
@@ -36,6 +37,9 @@ final class GeminiClient {
         var requestBody: [String: Any] = ["prompt": prompt]
         if let sys = systemInstruction {
             requestBody["systemInstruction"] = sys
+        }
+        if let config = generationConfig, !config.isEmpty {
+            requestBody["generationConfig"] = config
         }
 
         var request = URLRequest(url: url)

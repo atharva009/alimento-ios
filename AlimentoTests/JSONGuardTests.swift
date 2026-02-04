@@ -15,7 +15,7 @@ final class JSONGuardTests: XCTestCase {
         var responses: [String] = []
         var callCount = 0
         
-        func generateContent(prompt: String, systemInstruction: String?) async throws -> String {
+        func generateContent(prompt: String, systemInstruction: String?, generationConfig: [String: Any]?) async throws -> String {
             callCount += 1
             guard callCount <= responses.count else {
                 throw AIError.networkFailure(message: "No more mock responses")
