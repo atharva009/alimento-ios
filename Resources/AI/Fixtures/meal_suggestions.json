@@ -1,0 +1,81 @@
+{
+  "suggestions": [
+    {
+      "title": "Simple Pasta with Tomato Sauce",
+      "description": "Quick and easy pasta dish using pantry staples",
+      "cookTimeMinutes": 20,
+      "requiredIngredients": [
+        {
+          "name": "Pasta",
+          "quantity": 200,
+          "unit": "g"
+        },
+        {
+          "name": "Tomato Sauce",
+          "quantity": 400,
+          "unit": "ml"
+        }
+      ],
+      "missingIngredients": [
+        {
+          "name": "Garlic",
+          "quantity": 2,
+          "unit": "cloves"
+        }
+      ],
+      "steps": [
+        "Boil water and cook pasta according to package instructions",
+        "Heat tomato sauce in a pan",
+        "Add garlic and simmer for 5 minutes",
+        "Drain pasta and mix with sauce",
+        "Serve hot"
+      ],
+      "estimatedMacros": {
+        "calories": 450,
+        "proteinG": 15,
+        "carbsG": 80,
+        "fatG": 8
+      },
+      "disclaimer": "Nutritional information is an estimate only. Consult a nutritionist for accurate values."
+    },
+    {
+      "title": "Vegetable Stir Fry",
+      "description": "Healthy and colorful vegetable stir fry",
+      "cookTimeMinutes": 15,
+      "requiredIngredients": [
+        {
+          "name": "Mixed Vegetables",
+          "quantity": 300,
+          "unit": "g"
+        },
+        {
+          "name": "Soy Sauce",
+          "quantity": 30,
+          "unit": "ml"
+        }
+      ],
+      "missingIngredients": [
+        {
+          "name": "Ginger",
+          "quantity": 1,
+          "unit": "piece"
+        }
+      ],
+      "steps": [
+        "Heat oil in a wok or large pan",
+        "Add vegetables and stir fry for 5 minutes",
+        "Add soy sauce and ginger",
+        "Cook for another 5 minutes until vegetables are tender",
+        "Serve immediately"
+      ],
+      "estimatedMacros": {
+        "calories": 180,
+        "proteinG": 8,
+        "carbsG": 25,
+        "fatG": 5
+      },
+      "disclaimer": "Nutritional information is an estimate only. Consult a nutritionist for accurate values."
+    }
+  ]
+}
+

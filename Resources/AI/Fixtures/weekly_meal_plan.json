@@ -1,0 +1,80 @@
+{
+  "weekStart": "2024-12-23",
+  "days": [
+    {
+      "date": "2024-12-23",
+      "meals": {
+        "breakfast": {
+          "title": "Scrambled Eggs with Toast",
+          "description": "Classic breakfast",
+          "cookTimeMinutes": 10,
+          "ingredients": [
+            {
+              "name": "Eggs",
+              "quantity": 2,
+              "unit": "pieces"
+            },
+            {
+              "name": "Bread",
+              "quantity": 2,
+              "unit": "slices"
+            }
+          ]
+        },
+        "lunch": {
+          "title": "Caesar Salad",
+          "description": "Fresh salad with dressing",
+          "cookTimeMinutes": 15
+        },
+        "dinner": {
+          "title": "Grilled Chicken with Rice",
+          "description": "Protein-rich dinner",
+          "cookTimeMinutes": 30
+        }
+      }
+    },
+    {
+      "date": "2024-12-24",
+      "meals": {
+        "breakfast": {
+          "title": "Oatmeal with Berries",
+          "description": "Healthy start to the day",
+          "cookTimeMinutes": 5
+        },
+        "lunch": {
+          "title": "Sandwich",
+          "description": "Quick lunch option",
+          "cookTimeMinutes": 10
+        },
+        "dinner": {
+          "title": "Pasta Primavera",
+          "description": "Vegetable pasta dish",
+          "cookTimeMinutes": 25
+        }
+      }
+    }
+  ],
+  "dailyMacroEstimates": [
+    {
+      "date": "2024-12-23",
+      "calories": 2000,
+      "proteinG": 120,
+      "carbsG": 250,
+      "fatG": 60
+    },
+    {
+      "date": "2024-12-24",
+      "calories": 1900,
+      "proteinG": 110,
+      "carbsG": 240,
+      "fatG": 55
+    }
+  ],
+  "prepPlan": [
+    "Prep vegetables on Sunday",
+    "Cook grains in advance",
+    "Marinate proteins the night before"
+  ],
+  "disclaimer": "All nutritional information is an estimate only. Meal plans are suggestions and should be adjusted based on individual needs."
+}
+

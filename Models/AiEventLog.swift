@@ -10,28 +10,27 @@ import SwiftData
 
 @Model
 final class AiEventLog {
+    var eventType: String // "suggestion", "plan", "grocery", "chat"
     var timestamp: Date
-    var featureType: String // "suggest_meals", "generate_plan", "generate_grocery", "assistant_chat", "tool_call"
-    var tokenEstimate: Int? // Optional token count estimate
-    var success: Bool
-    var errorMessage: String? // Optional error message (no raw prompts stored)
-    
-    // Metadata
-    var createdAt: Date
+    var inputSummary: String? // Optional summary of inputs
+    var responseSummary: String? // Optional summary of AI response
+    var tokensUsed: Int? // Optional token count
+    var cost: Double? // Optional cost in currency
     
     init(
+        eventType: String,
         timestamp: Date = Date(),
-        featureType: String,
-        tokenEstimate: Int? = nil,
-        success: Bool,
-        errorMessage: String? = nil
+        inputSummary: String? = nil,
+        responseSummary: String? = nil,
+        tokensUsed: Int? = nil,
+        cost: Double? = nil
     ) {
+        self.eventType = eventType
         self.timestamp = timestamp
-        self.featureType = featureType
-        self.tokenEstimate = tokenEstimate
-        self.success = success
-        self.errorMessage = errorMessage
-        self.createdAt = Date()
+        self.inputSummary = inputSummary
+        self.responseSummary = responseSummary
+        self.tokensUsed = tokensUsed
+        self.cost = cost
     }
 }
 

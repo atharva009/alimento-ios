@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "name": "Milk",
+      "quantity": 2,
+      "unit": "L",
+      "reason": "low_stock",
+      "priority": 2
+    },
+    {
+      "name": "Bread",
+      "quantity": 1,
+      "unit": "loaf",
+      "reason": "missing",
+      "priority": 1
+    },
+    {
+      "name": "Chicken Breast",
+      "quantity": 500,
+      "unit": "g",
+      "reason": "missing",
+      "priority": 1
+    },
+    {
+      "name": "Tomatoes",
+      "quantity": 500,
+      "unit": "g",
+      "reason": "missing",
+      "priority": 2
+    },
+    {
+      "name": "Rice",
+      "quantity": 1,
+      "unit": "kg",
+      "reason": "staple",
+      "priority": 3
+    }
+  ],
+  "disclaimer": "This grocery list is a suggestion based on your planned meals and inventory. Please review and adjust quantities as needed."
+}
+

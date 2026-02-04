@@ -11,17 +11,13 @@ import SwiftData
 @Model
 final class InventoryItem {
     var name: String
-    var category: String // e.g., "Produce", "Dairy", "Grains", "Meat", "Spices"
+    var category: String // "Produce", "Dairy", "Grains", etc.
     var quantity: Double
-    var unit: String // e.g., "kg", "g", "L", "mL", "pieces", "cans"
+    var unit: String // "kg", "g", "L", "ml", "pieces", etc.
     var location: String // "pantry", "fridge", "freezer"
     var purchaseDate: Date
     var expiryDate: Date? // Optional expiry date
-    var lowStockThreshold: Double // Alert when quantity falls below this
-    
-    // Relationships
-    @Relationship(deleteRule: .nullify, inverse: \DishIngredient.inventoryItem)
-    var dishIngredients: [DishIngredient]?
+    var lowStockThreshold: Double // Alert when quantity <= this
     
     // Metadata
     var createdAt: Date
@@ -55,8 +51,8 @@ final class InventoryItem {
     }
     
     var isExpiringSoon: Bool {
-        guard let expiryDate = expiryDate else { return false }
-        let daysUntilExpiry = Calendar.current.dateComponents([.day], from: Date(), to: expiryDate).day ?? 0
+        guard let expiry = expiryDate else { return false }
+        let daysUntilExpiry = Calendar.current.dateComponents([.day], from: Date(), to: expiry).day ?? 0
         return daysUntilExpiry >= 0 && daysUntilExpiry <= 3
     }
 }
